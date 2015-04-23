@@ -1,0 +1,42 @@
+---
+#This Role Is to upgrade existing Centos 6.x boxes to 7.0
+
+#Download the Pre Upgrade Tools
+- name: Download Pre-Upgrade Assistant 
+  get_url: url={{ item }} dest=/tmp mode=07550
+  with_items:
+      - http://dev.centos.org/centos/6/upg/x86_64/Packages/preupgrade-assistant-1.0.2-36.0.1.el6.centos.x86_64.rpm
+      - http://dev.centos.org/centos/6/upg/x86_64/Packages/preupgrade-assistant-contents-0.5.14-1.el6.centos.noarch.rpm
+      - http://dev.centos.org/centos/6/upg/x86_64/Packages/preupgrade-assistant-ui-1.0.2-36.0.1.el6.centos.x86_64.rpm
+      - http://dev.centos.org/centos/6/upg/x86_64/Packages/redhat-upgrade-tool-0.7.22-3.el6.centos.noarch.rpm
+  tags: pre_upgrade
+  when: ansible_distribution == "CentOS"
+
+
+#Install the Pre-Upgrade Tools
+- name: Install pre-upgrade components
+  yum: name={{ item }} state=present
+  with_items:
+      - /tmp/preupgrade-assistant-1.0.2-36.0.1.el6.centos.x86_64.rpm
+      - /tmp/preupgrade-assistant-contents-0.5.14-1.el6.centos.noarch.rpm
+      - /tmp/preupgrade-assistant-ui-1.0.2-36.0.1.el6.centos.x86_64.rpm
+      - /tmp/redhat-upgrade-tool-0.7.22-3.el6.centos.noarch.rpm
+  tags: pre_upgrade
+
+
+#Run the Pre Upgrade Tool
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

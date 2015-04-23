@@ -1,0 +1,28 @@
+- hosts: localhost
+  user: vagrant
+  sudo: yes
+  gather_facts: no
+  connection: local
+
+
+  tasks:
+  # Start a virtual machine, credentials used in $HOME/.cloudstack.ini
+  - name: Start a virtual machine
+    local_action: cloudstack_vm name=test-ansible-cs state=started
+    tags: start
+
+  # Stop a virtual machine
+  - name: Stop a virtual machine
+    local_action: cloudstack_vm name=test-ansible-cs state=stopped
+    tags: stop
+
+
+
+  # Create a virtual machine
+  - name: Create a virtual machine
+    local_action: cloudstack_vm name="{{ 'test' | generate_vm_name}}" group=test template=vmtpl-centos6 hypervisor=XenServer service_offering=xencs01-1024mb disk_offering=local-custom disk_size='20'
+    register: vm
+    tags: create
+
+
+  - debug: msg='VM {{ vm.name }} with default ip {{ vm.default_ip }} and is in state {{ vm.vm_state }}'

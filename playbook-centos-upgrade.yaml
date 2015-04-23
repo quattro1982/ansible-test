@@ -1,0 +1,6 @@
+# Upgrade to CentOS 7 hosts
+- hosts: tag_centos
+  remote_user: vagrant
+  sudo: true
+  roles:
+  -  centos-upgrade

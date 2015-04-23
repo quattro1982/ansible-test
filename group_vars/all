@@ -1,0 +1,2 @@
+ntpserver: server 0.asia.pool.ntp.org
+vm_name_length: 8

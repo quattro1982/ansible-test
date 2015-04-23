@@ -1,0 +1,22 @@
+---
+
+- name: Add libselinux-python
+  yum: name=libselinux-python state=present
+  when: ansible_distribution == "CentOS"  
+
+- name: Set /etc/hosts
+  template: src=hosts.j2 dest=/etc/hosts 
+
+- name: Add the EPEL Repository
+  yum: name=http://mirror.nus.edu.sg/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm state=present
+
+
+- name: Install Python PIP and Python Development
+  yum: "name={{ item }} state=installed"
+  with_items:
+   - python-pip
+   - python-devel
+
+
+- name: Install Development Tools
+  yum: name="@Development tools" state=present

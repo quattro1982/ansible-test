@@ -1,0 +1,7 @@
+# Install common packages
+- hosts: tag_centos
+  remote_user: vagrant
+  sudo: true
+  roles:
+  -  centos
+  -  common

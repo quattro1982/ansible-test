@@ -1,0 +1,56 @@
+---
+# This role contains common plays that will run on all nodes.
+
+- name: Remove bogus AWS values
+  sysctl: name={{ item }} state=absent reload=no
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.bridge.bridge-nf-call-iptables
+    - net.bridge.bridge-nf-call-arptables
+
+- name: Set max open files in limits.conf
+  lineinfile: dest=/etc/security/limits.conf
+              line="{{item}}"
+  with_items:
+    - 'root soft nofile 1000000'
+    - 'root hard nofile 1000000'
+
+- name: Set max open files
+  sysctl: name="fs.file-max" value=100000 sysctl_set=yes state=present reload=yes
+
+- name: set mtu
+  command: ip link set eth0 mtu 1500
+
+- name: Disable OOM Killer
+  sysctl: name="vm.overcommit_memory" value=2 sysctl_set=yes state=present reload=yes
+
+- name: Disable OOM Killer with overcommit ratio
+  sysctl: name="vm.overcommit_ratio" value=200 sysctl_set=yes state=present reload=yes
+
+- name: Install Oracle JDK 7
+  yum: name=/vagrant/jdk-7u79-linux-x64.rpm state=present
+  #yum: name=jdk state=present
+  register: result
+  tags: jdk
+
+- name: Setup JDK mapping
+  command: alternatives --install /usr/bin/java java /usr/java/latest/jre/bin/java 200000
+  when: result|changed
+
+- name: Install Java Native Access
+  yum: name=jna state=present
+  tags: jna
+
+- name: Install ntp 
+  yum: name=ntp state=present
+  tags: ntp
+
+- name: Configure ntp file
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+
+- name: Start the ntp service
+  service: name=ntpd state=started enabled=yes
+  tags: ntp
+
